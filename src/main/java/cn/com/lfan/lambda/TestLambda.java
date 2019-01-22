@@ -45,4 +45,13 @@ public class TestLambda {
                     return wealthy;
                 }).collect(Collectors.toList());
     }
+
+    @Test
+    public void test1() {
+
+    }
+
+    public String ss (){
+        return "ffff";
+    }
 }
