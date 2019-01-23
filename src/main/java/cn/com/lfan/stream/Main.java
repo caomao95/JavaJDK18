@@ -24,6 +24,15 @@ import java.util.stream.Stream;
  */
 public class Main {
 
+
+    private static List<Dish> dishes = Arrays.asList(
+            new Dish("pock", false, 800, Dish.Type.MEAT),
+            new Dish("beef", false, 700, Dish.Type.MEAT),
+            new Dish("chicken", false, 400, Dish.Type.MEAT),
+            new Dish("french", true, 500, Dish.Type.OTHER),
+            new Dish("rice", true, 350, Dish.Type.FISH)
+    );
+
     /**
      * 1. 定义一个菜单（dishes）;
      * <p>
@@ -43,16 +52,14 @@ public class Main {
      * limit-截断流，使其元素不超过给定数量。
      * <p>
      * collect-将流转换为其他形式。
+     * <p>
+     * 流的使用一般包括三件事:
+     * 1. 一个数据源（如集合）来执行一个查询;
+     * 2. 一个中间操作链，形成一条流水线;
+     * 3. 一个终端操作，执行流水线，并能生成结果。
      */
     @Test
     public void stream() {
-        List<Dish> dishes = Arrays.asList(
-                new Dish("pock", false, 800, Dish.Type.MEAT),
-                new Dish("beef", false, 700, Dish.Type.MEAT),
-                new Dish("chicken", false, 400, Dish.Type.MEAT),
-                new Dish("french", true, 500, Dish.Type.OTHER),
-                new Dish("rice", true, 350, Dish.Type.FISH)
-        );
         List<String> threeHighCaloricDishNames =
                 //从dishes中获取流
                 dishes.stream()
@@ -78,20 +85,51 @@ public class Main {
      * 比如：
      * 存在DVD中的电影，就是一个集合（字节或者帧，无所谓），因为它包含了整个数据结构。
      * 在线观看电影就是一个流，字节流或者帧流。
-     *
+     * <p>
      * 集中式内存中的数据结构，包含了数据结构中所有的值。
      * 流就像是一个延迟创建的集合：只有在消费者要求的时候才计算值。
-     *
+     * <p>
      * 例子:
      * 以质数为例，要创建一个包含所有质数的集合，那程序就没完没了了，因为总有新的质数需要计算，然后加到集合中。
-     *
+     * <p>
      * 和迭代器类似，流只能遍历一次。
      */
     @Test
-    public void testStream(){
-        List<String> list = Arrays.asList("java8","java7","java6");
+    public void testStream() {
+        List<String> list = Arrays.asList("java8", "java7", "java6");
         Stream<String> stream = list.stream();
         stream.forEach(System.out::println);
+        //抛出异常 java.lang.IllegalStateException: stream has already been operated upon or closed
         stream.forEach(System.out::println);
+    }
+
+    /**
+     * 筛选和切片
+     *
+     * @see java.util.stream.Streams 接口支持 filter 方法。该操作会接受一个谓词（一个返回boolean的函数）作为参数，
+     * 并返回一个包含所有符合谓词的元素的流。
+     * <p>
+     * 筛选各异的元素
+     * @see Stream#distinct() 返回一个元素各异的流。
+     * <p>
+     * 截断流
+     * @see Stream#limit(long) 返回一个不超过给定长度的流。
+     * <p>
+     * 跳过元素
+     * @see Stream#skip(long) 返回一个丢掉前long个元素的流。
+     */
+    @Test
+    public void useStream() {
+        // 所有符合素食者的菜肴
+        List<Dish> vegetarianMenu = dishes.stream()
+                .filter(Dish::isVegetarian)
+                .collect(Collectors.toList());
+
+        // 筛选出列表中所有的偶数，并确保没有重复。
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 4, 5, 6, 7, 7, 8);
+        numbers.stream()
+                .filter(i -> i % 2 == 0)
+                .distinct()
+                .forEach(System.out::println);
     }
 }
